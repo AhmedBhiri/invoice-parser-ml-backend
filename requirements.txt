@@ -1,0 +1,7 @@
+pillow
+Roboflow
+pytesseract
+os
+zipfile
+base64
+django
