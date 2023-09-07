@@ -5,7 +5,6 @@ from django.middleware.csrf import get_token
 from PIL import Image
 import os
 import zipfile
-import json
 import base64
 from roboflow import Roboflow
 import pytesseract
@@ -138,28 +137,31 @@ def handle_post_request(request):
 
         detected_text = Box_call()
 
-        combined_response_data = []
+        # Serve the prediction images as inline images in the response
+        response = HttpResponse(content_type='text/html')  # Set content type
+        response.write('<html><body>')  # Start HTML
 
         for path in prediction_paths:
-            # Add the detected text to the response for each image
+            print(f"Image path: {path}")  # Print the image path
+            with open(path, 'rb') as f:
+                image_data = f.read()
+                image_content_type = 'image/jpeg'  # Adjust content type as needed
+                image_base64 = base64.b64encode(image_data).decode('utf-8')
+                response.write(
+                    f'<img src="data:{image_content_type};base64,{image_base64}" />')
+
+            # Add the detected text to the response
             image_filename = os.path.basename(path)
             detected_text_for_image = detected_text.get(image_filename, {})
 
-            # Read and base64-encode the image
-            with open(path, 'rb') as f:
-                image_data = f.read()
-                image_base64 = base64.b64encode(image_data).decode('utf-8')
+            for class_name, text_list in detected_text_for_image.items():
+                response.write(f'<h3>{class_name} Detected Text:</h3>')
+                for text in text_list:
+                    response.write(f'<p>{text}</p>')
 
-            # Create a dictionary for each image containing the image data and detected text
-            image_response_data = {
-                'image_base64': image_base64,
-                'detected_text': detected_text_for_image
-            }
+        response.write('</body></html>')  # End HTML
 
-            combined_response_data.append(image_response_data)
-
-        # Return the combined response data as JSON
-        return JsonResponse(combined_response_data, safe=False)
+        return response
 
 
 def get_csrf_token(request):
