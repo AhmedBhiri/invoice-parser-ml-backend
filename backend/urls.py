@@ -18,6 +18,7 @@ from django.contrib import admin
 from django.urls import path
 from api import views
 urlpatterns = [
-    path('test', views.handle_post_request, name='test'),
+    path('inv', views.handle_inv_request, name='inv'),
+    path('rec', views.handle_rec_request, name='rec'),
     path('csrf', views.get_csrf_token, name='csrf')
 ]
