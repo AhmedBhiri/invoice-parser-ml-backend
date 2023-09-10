@@ -27,6 +27,40 @@ projectRec = rfRec.workspace().project("pfe-vzxx2")
 modelRec = projectRec.version(9).model
 
 
+def convert_images(image_files):
+    converted_images = []
+    non_pdf_files = []
+
+    for uploaded_file in image_files:
+        if uploaded_file.name.endswith('.pdf'):
+            # If the file is a PDF, convert it to images
+            pdf_data = uploaded_file.read()
+            images = convert_from_bytes(pdf_data)
+
+            for image in images:
+                # Create an in-memory file object to simulate an uploaded file
+                img_io = io.BytesIO()
+                # Save the image to the in-memory file
+                image.save(img_io, format='JPEG')
+                img_io.seek(0)  # Reset the file position to the beginning
+
+                # Create an UploadedFile instance for the image
+                converted_image = UploadedFile(
+                    file=img_io,
+                    name=uploaded_file.name.replace(
+                        '.pdf', f'_page{images.index(image) + 1}.jpg'),
+                    content_type='image/jpeg'  # Adjust content type as needed
+                )
+                converted_images.append(converted_image)
+        else:
+            # If it's not a PDF, add it to the non-PDF files list
+            non_pdf_files.append(uploaded_file)
+
+    # Combine the converted images and non-PDF files into a single list
+    image_files = converted_images + non_pdf_files
+    return image_files
+
+
 def OCR_call(image_paths, bounding_boxes):
     detected_text = {}  # Initialize detected_text dictionary
     for image_path, boxes in zip(image_paths, bounding_boxes):
@@ -143,40 +177,11 @@ def handle_inv_request(request):
         # Assuming the input field name is 'images'
         image_files = request.FILES.getlist('images')
 
-        # Assuming the input field name is 'images'
-        image_files = request.FILES.getlist('images')
+        # Convert PDFs to images
 
-        converted_images = []
-        non_pdf_files = []
+        image_files = convert_images(image_files)
 
-        for uploaded_file in image_files:
-            if uploaded_file.name.endswith('.pdf'):
-                # If the file is a PDF, convert it to images
-                pdf_data = uploaded_file.read()
-                images = convert_from_bytes(pdf_data)
-
-                for image in images:
-                    # Create an in-memory file object to simulate an uploaded file
-                    img_io = io.BytesIO()
-                    # Save the image to the in-memory file
-                    image.save(img_io, format='JPEG')
-                    img_io.seek(0)  # Reset the file position to the beginning
-
-                    # Create an UploadedFile instance for the image
-                    converted_image = UploadedFile(
-                        file=img_io,
-                        name=uploaded_file.name.replace(
-                            '.pdf', f'_page{images.index(image) + 1}.jpg'),
-                        content_type='image/jpeg'  # Adjust content type as needed
-                    )
-                    converted_images.append(converted_image)
-            else:
-                # If it's not a PDF, add it to the non-PDF files list
-                non_pdf_files.append(uploaded_file)
-
-        # Combine the converted images and non-PDF files into a single list
-        image_files = converted_images + non_pdf_files
-
+        # detection
         detected_text = Box_call()
 
         combined_response_data = []
@@ -264,9 +269,12 @@ def handle_rec_request(request):
         prediction_paths = []  # Collect prediction image paths
         detected_text = {}  # Initialize detected_text dictionary
 
-        # Assuming the input field name is 'images'
         image_files = request.FILES.getlist('images')
+        # convert pdf to images
 
+        image_files = convert_images(image_files)
+
+        # detection
         detected_text = Box_call()
 
         combined_response_data = []
