@@ -4,12 +4,15 @@ from django.http import HttpResponse, JsonResponse, FileResponse
 from django.middleware.csrf import get_token
 from PIL import Image
 import os
+import io
 import zipfile
 import json
 import base64
 from roboflow import Roboflow
 import pytesseract
 from pytesseract import Output
+from django.core.files.uploadedfile import UploadedFile
+from pdf2image import convert_from_bytes
 
 ROOT_PATH = os.path.dirname(os.path.abspath(__file__+"/.."))
 
@@ -142,6 +145,37 @@ def handle_inv_request(request):
 
         # Assuming the input field name is 'images'
         image_files = request.FILES.getlist('images')
+
+        converted_images = []
+        non_pdf_files = []
+
+        for uploaded_file in image_files:
+            if uploaded_file.name.endswith('.pdf'):
+                # If the file is a PDF, convert it to images
+                pdf_data = uploaded_file.read()
+                images = convert_from_bytes(pdf_data)
+
+                for image in images:
+                    # Create an in-memory file object to simulate an uploaded file
+                    img_io = io.BytesIO()
+                    # Save the image to the in-memory file
+                    image.save(img_io, format='JPEG')
+                    img_io.seek(0)  # Reset the file position to the beginning
+
+                    # Create an UploadedFile instance for the image
+                    converted_image = UploadedFile(
+                        file=img_io,
+                        name=uploaded_file.name.replace(
+                            '.pdf', f'_page{images.index(image) + 1}.jpg'),
+                        content_type='image/jpeg'  # Adjust content type as needed
+                    )
+                    converted_images.append(converted_image)
+            else:
+                # If it's not a PDF, add it to the non-PDF files list
+                non_pdf_files.append(uploaded_file)
+
+        # Combine the converted images and non-PDF files into a single list
+        image_files = converted_images + non_pdf_files
 
         detected_text = Box_call()
 
