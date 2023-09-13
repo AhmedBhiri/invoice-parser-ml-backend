@@ -305,7 +305,7 @@ def handle_rec_request(request):
 
 
 def index(request):
-    return render(request, '/Users/snake/WorkFlow/AI/PFE/WEBAPP/invoice-parser-ml-backend/api/templates/index.html')
+    return render(request, 'index.html')
 
 
 def get_csrf_token(request):
