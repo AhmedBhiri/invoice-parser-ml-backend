@@ -304,6 +304,10 @@ def handle_rec_request(request):
     detected_text = {}  # Initialize detected_text dictionary
 
 
+def index(request):
+    return render(request, '/Users/snake/WorkFlow/AI/PFE/WEBAPP/invoice-parser-ml-backend/api/templates/index.html')
+
+
 def get_csrf_token(request):
     csrf_token = get_token(request)
     return JsonResponse({'csrf_token': csrf_token})

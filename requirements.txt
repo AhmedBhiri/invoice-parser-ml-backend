@@ -1,5 +1,9 @@
-django>=
+Django>=
 pillow>=
 roboflow>=
 pytesseract>=
 numpy>=
+os>=
+io>=
+zipfile>=
+pdf2image>=
