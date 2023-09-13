@@ -95,7 +95,7 @@ def OCR_call(image_paths, bounding_boxes):
 
             cropped_image = image.crop(
                 (x_top_left, y_top_left, x_bottom_right, y_bottom_right))
-            cropped_image.show()
+            # cropped_image.show()
             # Apply additional preprocessing if needed
 
             text = pytesseract.image_to_string(
