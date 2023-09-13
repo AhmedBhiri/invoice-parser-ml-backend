@@ -3,5 +3,4 @@ pillow>=
 roboflow>=
 pytesseract>=
 numpy>=
-zipfile>=
 pdf2image>=
