@@ -4,3 +4,4 @@ roboflow>=
 pytesseract>=
 numpy>=
 pdf2image>=
+django-cors-headers>=
