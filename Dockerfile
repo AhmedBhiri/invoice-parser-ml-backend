@@ -1,5 +1,5 @@
 
-FROM python:3.8-slim-buster
+FROM python:3.9-slim-buster
 
 # Set the working directory to /app
 WORKDIR /app
@@ -7,8 +7,8 @@ WORKDIR /app
 # Install the required dependencies for the application
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
-        build-essential \
-        libpq-dev \
+    build-essential \
+    libpq-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy the requirements.txt file to the working directory
