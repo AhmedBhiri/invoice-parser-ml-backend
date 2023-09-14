@@ -5,7 +5,9 @@ FROM python:3.9-slim-buster
 WORKDIR /app
 
 # Install the required dependencies for the application
-RUN apt-get update \
+RUN apt-get update \ sudo apt update \ 
+    sudo apt install tesseract-ocr \ 
+    sudo apt install libtesseract-dev \ 
     && apt-get install -y --no-install-recommends \
     build-essential \
     libpq-dev \
