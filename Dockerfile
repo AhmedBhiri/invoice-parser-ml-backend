@@ -5,12 +5,13 @@ FROM python:3.9-slim-buster
 WORKDIR /app
 
 # Install the required dependencies for the application
-RUN apt-get update \ sudo apt update \ 
-    sudo apt install tesseract-ocr \ 
-    sudo apt install libtesseract-dev \ 
-    && apt-get install -y --no-install-recommends \
-    build-essential \
-    libpq-dev \
+
+# Fixed typo: removed "sudo" from each line, as "apt-get" does not require sudo
+RUN apt-get update \
+    && apt-get install -y tesseract-ocr \ 
+    && apt-get install -y libtesseract-dev \ 
+    && apt-get install -y build-essential \  
+    && apt-get install -y libpq-dev \ 
     && rm -rf /var/lib/apt/lists/*
 
 # Copy the requirements.txt file to the working directory
