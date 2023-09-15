@@ -61,6 +61,24 @@ def convert_images(image_files):
     return image_files
 
 
+def delete_files_in_directory(directory):
+    for filename in os.listdir(directory):
+        file_path = os.path.join(directory, filename)
+        try:
+            if os.path.isfile(file_path):
+                os.unlink(file_path)
+        except Exception as e:
+            print(f"Error deleting {file_path}: {e}")
+
+
+def cleanup_directories():
+    raw_directory = ROOT_PATH+"/raw"  # Update with your actual directory path
+    pred_directory = ROOT_PATH+"/pred"  # Update with your actual directory path
+
+    delete_files_in_directory(raw_directory)
+    delete_files_in_directory(pred_directory)
+
+
 def OCR_call(image_paths, bounding_boxes):
     detected_text = {}  # Initialize detected_text dictionary
     for image_path, boxes in zip(image_paths, bounding_boxes):
@@ -203,12 +221,12 @@ def handle_inv_request(request):
             }
 
             combined_response_data.append(image_response_data)
-
+        cleanup_directories()
+        response_data = []
+        prediction_paths = []
+        detected_text = {}
         # Return the combined response data as JSON
         return JsonResponse(combined_response_data, safe=False)
-    response_data = []
-    prediction_paths = []
-    detected_text = {}
 
 
 def handle_rec_request(request):
@@ -297,11 +315,12 @@ def handle_rec_request(request):
 
             combined_response_data.append(image_response_data)
 
+        cleanup_directories()
+        response_data = []
+        prediction_paths = []
+        detected_text = {}
         # Return the combined response data as JSON
         return JsonResponse(combined_response_data, safe=False)
-    response_data = []
-    prediction_paths = []  # Collect prediction image paths
-    detected_text = {}  # Initialize detected_text dictionary
 
 
 def index(request):

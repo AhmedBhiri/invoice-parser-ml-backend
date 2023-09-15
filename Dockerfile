@@ -8,6 +8,7 @@ WORKDIR /app
 
 # Fixed typo: removed "sudo" from each line, as "apt-get" does not require sudo
 RUN apt-get update \
+    && apt-get install -y poppler-utils \ 
     && apt-get install -y tesseract-ocr \ 
     && apt-get install -y libtesseract-dev \ 
     && apt-get install -y build-essential \  
