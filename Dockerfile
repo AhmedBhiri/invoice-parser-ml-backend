@@ -2,9 +2,18 @@
 FROM python:3.9-slim-buster
 
 # Set the working directory to /app
+
 WORKDIR /app
 
+
+# Create "raw" and "pred" directories
+RUN mkdir /app/raw /app/pred
+
+# Set permissions for the directories (optional)
+RUN chmod 755 /app/raw /app/pred
+
 # Install the required dependencies for the application
+
 
 # Fixed typo: removed "sudo" from each line, as "apt-get" does not require sudo
 RUN apt-get update \
