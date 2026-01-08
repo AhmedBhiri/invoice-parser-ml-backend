@@ -67,6 +67,7 @@ This backend exposes REST endpoints used by the frontend to:
 - Handle temporary storage during processing
 
 The frontend is responsible for user interaction, validation, and persistence.
+- The Roboflow API key must be provided via the `ROBOFLOW_API_KEY` environment variable.
 
 ---
 
