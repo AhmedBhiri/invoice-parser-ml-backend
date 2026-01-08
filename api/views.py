@@ -17,12 +17,12 @@ from pdf2image import convert_from_bytes
 ROOT_PATH = os.path.dirname(os.path.abspath(__file__+"/.."))
 
 # loading The invoice model
-rfInv = Roboflow(api_key="8rvFh2AP2Wi8X3IhC6kW")
+rfInv = Roboflow(api_key="")
 projectInv = rfInv.workspace().project("pfefact")
 modelInv = projectInv.version(5).model
 
 # loading The reciept model
-rfRec = Roboflow(api_key="8rvFh2AP2Wi8X3IhC6kW")
+rfRec = Roboflow(api_key="")
 projectRec = rfRec.workspace().project("pfe-vzxx2")
 modelRec = projectRec.version(9).model
 
